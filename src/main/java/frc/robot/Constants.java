@@ -156,6 +156,20 @@ public final class Constants {
     public static final double kDYController = 0;
     public static final double kPThetaController = 1;
 
+    public static class LauncherConstants{
+      public static final int kFeederID = 5;
+      public static final int kLauncherID = 6;
+      
+      public static final int kLauncherCurrentLimit = 80;
+      public static final int kFeedCurrentLimit = 80;
+
+      public static final double kLauncherSpeed = 1;
+      public static final double kLaunchFeederSpeed = 1;
+      public static final double kIntakeLauncherSpeed = -1;
+      public static final double kIntakeFeederSpeed = -.2;
+
+      public static final double kLauncherDelay = 1;
+    }
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
         new TrapezoidProfile.Constraints(
