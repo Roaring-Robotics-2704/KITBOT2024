@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
-import static frc.robot.Constants.LauncherConstants;
+import static frc.robot.Constants.LauncherConstants.*;
+//import frc.robot.Constants.LauncherConstants;
 import frc.robot.Constants;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -28,7 +29,7 @@ public class SUBShooter extends SubsystemBase {
         );
     }
 
-    public Command get launchCommand(){
+    public Command getlaunchCommand(){
         return this.startEnd(
             ()->{
                 setFeedWeel(kLaunchFeederSpeed);

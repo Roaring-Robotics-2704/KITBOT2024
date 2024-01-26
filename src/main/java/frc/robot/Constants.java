@@ -155,8 +155,10 @@ public final class Constants {
     public static final double kDXController = 0;
     public static final double kDYController = 0;
     public static final double kPThetaController = 1;
+  }
 
-    public static class LauncherConstants{
+    public static class LauncherConstants {
+      private LauncherConstants(){}
       public static final int kFeederID = 5;
       public static final int kLauncherID = 6;
       
@@ -173,11 +175,13 @@ public final class Constants {
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
         new TrapezoidProfile.Constraints(
-            kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+            AutoConstants.kMaxAngularSpeedRadiansPerSecond, AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared);
+
+    public static final class NeoMotorConstants {
+     private NeoMotorConstants(){}
+      public static final double kFreeSpeedRpm = 5676;
+    }
   }
 
-  public static final class NeoMotorConstants {
-    private NeoMotorConstants(){}
-    public static final double kFreeSpeedRpm = 5676;
-  }
-}
+ 
+//}
