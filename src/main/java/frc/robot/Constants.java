@@ -139,6 +139,7 @@ public final class Constants {
     private OIConstants(){}
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
+    public static final int kDriver2ControllerPort = 1;
   }
 
   public static final class AutoConstants {
@@ -160,6 +161,24 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+  }
+  public static class LauncherConstants {
+    // PWM ports/CAN IDs for motor controllers
+    public static  int k_FeederID = 9;
+    public static  int k_LauncherID = 10;
+
+    // Current limit for launcher and feed wheels
+    public static final int kLauncherCurrentLimit = 80;
+    public static final int kFeedCurrentLimit = 80;
+
+    // Speeds for wheels when intaking and launching. Intake speeds are negative to run the wheels
+    // in reverse
+    public static final double kLauncherSpeed = 0.9;
+    public static final double kLaunchFeederSpeed = 0.9;
+    public static final double kIntakeLauncherSpeed = -1.5;
+    public static final double kIntakeFeederSpeed = -.5;
+
+    public static final double kLauncherDelay = 0.5;
   }
 
   public static final class NeoMotorConstants {

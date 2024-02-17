@@ -1,44 +1,36 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
-import frc.robot.commands.CMDDrive;
-import frc.robot.subsystems.DriveSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.util.List;
-
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.LauncherConstants;
+import frc.robot.Constants.OIConstants;
+ import frc.robot.commands.CMDAlign;
+ import frc.robot.commands.CMDDrive;
+import frc.robot.commands.CMDShooter;
+import frc.robot.commands.CMDLaunchNote;
+import frc.robot.commands.CMDPrepareLaunch;
+ import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.SUBShooter;
+import frc.robot.subsystems.SUBVision;
+import frc.robot.subsystems.SUBShooter.*;
+import frc.utils.RoaringUtils;
+import frc.utils.RoaringUtils.DeadzoneUtils;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -50,6 +42,11 @@ public class RobotContainer {
   // The robot's subsystems
   public final static DriveSubsystem m_robotDrive = new DriveSubsystem();
     public static final CMDDrive driveRobotCommand = new CMDDrive();
+    public final static SUBShooter m_sUBShooter = new SUBShooter();
+    public static final CMDPrepareLaunch m_CMDPrepareLaunch = new CMDPrepareLaunch(m_sUBShooter);
+   public static final SUBShooter m_SUBShooter = new SUBShooter();
+   public static final SUBVision m_SUBVision = new SUBVision();
+    public static final CMDAlign m_CMDAlign = new CMDAlign();
 
 SendableChooser<String> PathPlannerautoChooser = new SendableChooser<String>();
     SendableChooser<String> ChoreoautoChooser = new SendableChooser<String>();
@@ -60,7 +57,8 @@ SendableChooser<String> PathPlannerautoChooser = new SendableChooser<String>();
     public static SendableChooser<Boolean> rateLimitChooser = new SendableChooser<Boolean>();
 
   // The driver's controller
-  static XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+   public static XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  public static CommandXboxController OIDriverController2 = new CommandXboxController(OIConstants.kDriver2ControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -92,35 +90,19 @@ SendableChooser<String> PathPlannerautoChooser = new SendableChooser<String>();
                 m_robotDrive // Reference to this subsystem to set requirements
         );
     // Configure the button bindings
-
-
+    NamedCommands.registerCommand("Intake", m_SUBShooter.getIntakeCommand().withTimeout(1));
+ 
     fieldOrientedChooser.setDefaultOption("Field Oriented", true);
     fieldOrientedChooser.addOption("Robot Oriented", false);
-
     rateLimitChooser.setDefaultOption("False", false);
     rateLimitChooser.addOption("True", true);
-
     SmartDashboard.putData("Rate limit",rateLimitChooser);
     SmartDashboard.putData("Field oriented",fieldOrientedChooser);
 
-    configureButtonBindings();
-    try {
-   for (String option : AutoBuilder.getAllAutoNames()) {
-      // Assuming {String here} represents the same string, you can modify this part as needed
-      PathPlannerautoChooser.addOption(option.toString(), option.toString());
-  }
-    File deploy = Filesystem.getDeployDirectory();
-File pathfolder = new File(Path.of(deploy.getAbsolutePath(),"choreo").toString());
-File[] listOfFiles = pathfolder.listFiles();
 
-for (int i = 0; i < listOfFiles.length; i++) {
-  if (listOfFiles[i].isFile()) {
-    System.out.println("path:" + listOfFiles[i].getName());
-    ChoreoautoChooser.addOption(listOfFiles[i].getName().replace(".traj", ""), listOfFiles[i].getName().replace(".traj", ""));
-  }
-}
-    } finally {}
-    SmartDashboard.putData("Choreo path Chooser",ChoreoautoChooser);
+
+    configureButtonBindings();
+   
     SmartDashboard.putData("Path planner chooser", PathPlannerautoChooser);
     pathChooser.setDefaultOption("Choreo", "choreo");
     pathChooser.addOption("PathPlanner", "pathplanner");
@@ -154,7 +136,17 @@ for (int i = 0; i < listOfFiles.length; i++) {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
-  }
+  OIDriverController2
+  .rightBumper()
+  .whileTrue(
+      new CMDPrepareLaunch(m_SUBShooter)
+          .withTimeout(LauncherConstants.kLauncherDelay)
+          .andThen(new CMDLaunchNote(m_SUBShooter))
+          .handleInterrupt(() -> m_SUBShooter.stop()));
+
+OIDriverController2.leftBumper().whileTrue(m_SUBShooter.getIntakeCommand());
+}
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
