@@ -1,7 +1,9 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -27,10 +29,12 @@ import frc.robot.commands.CMDLaunchNote;
 import frc.robot.commands.CMDPrepareLaunch;
  import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.SUBShooter;
-import frc.robot.subsystems.SUBVision;
+import frc.robot.subsystems.Vision.SUBVision;
 import frc.robot.subsystems.SUBShooter.*;
 import frc.utils.RoaringUtils;
 import frc.utils.RoaringUtils.DeadzoneUtils;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -44,9 +48,13 @@ public class RobotContainer {
     public static final CMDDrive driveRobotCommand = new CMDDrive();
     public final static SUBShooter m_sUBShooter = new SUBShooter();
     public static final CMDPrepareLaunch m_CMDPrepareLaunch = new CMDPrepareLaunch(m_sUBShooter);
+    private static final PathConstraints kPathconstraints = new PathConstraints(5, 3, 360, 15);
    public static final SUBShooter m_SUBShooter = new SUBShooter();
    public static final SUBVision m_SUBVision = new SUBVision();
     public static final CMDAlign m_CMDAlign = new CMDAlign();
+    public enum RobotMode {
+      KitBot, CompBot
+    }
 
 SendableChooser<String> PathPlannerautoChooser = new SendableChooser<String>();
     SendableChooser<String> ChoreoautoChooser = new SendableChooser<String>();
@@ -55,6 +63,8 @@ SendableChooser<String> PathPlannerautoChooser = new SendableChooser<String>();
     public static SendableChooser<String> pathChooser = new SendableChooser<String>();
   
     public static SendableChooser<Boolean> rateLimitChooser = new SendableChooser<Boolean>();
+      private static SendableChooser<RobotMode> robotChooser = new SendableChooser<RobotMode>();
+
 
   // The driver's controller
    public static XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -98,7 +108,8 @@ SendableChooser<String> PathPlannerautoChooser = new SendableChooser<String>();
     rateLimitChooser.addOption("True", true);
     SmartDashboard.putData("Rate limit",rateLimitChooser);
     SmartDashboard.putData("Field oriented",fieldOrientedChooser);
-
+    robotChooser.setDefaultOption("Main Comp", RobotMode.CompBot);
+    robotChooser.addOption("KitBot", RobotMode.KitBot);
 
 
     configureButtonBindings();
@@ -150,17 +161,12 @@ OIDriverController2.leftBumper().whileTrue(m_SUBShooter.getIntakeCommand());
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
+   * 
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
     // Create config for trajectory
-          if (pathChooser.getSelected() == "choreo") {
-      PathPlannerPath ChoreoTraj = PathPlannerPath.fromChoreoTrajectory(ChoreoautoChooser.getSelected());
-      return AutoBuilder.followPath(ChoreoTraj);
-    } else if (pathChooser.getSelected() == "pathplanner") {
-      return AutoBuilder.buildAuto(PathPlannerautoChooser.getSelected());
+    public Command getAutonomousCommand() {
+      return AutoBuilder.pathfindToPose(new Pose2d(1.75,5.5,Rotation2d.fromDegrees(180)), kPathconstraints);
     }
-    else return null;
-  }
 }
