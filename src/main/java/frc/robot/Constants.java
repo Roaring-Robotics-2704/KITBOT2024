@@ -164,7 +164,8 @@ public final class Constants {
   }
   public static class LauncherConstants {
     // PWM ports/CAN IDs for motor controllers
-    public static  int k_FeederID = 9;
+    public static  int kFeeder1ID = 20;
+    public static  int kFeeder2ID = 21;
     public static  int k_LauncherID = 10;
 
     // Current limit for launcher and feed wheels

@@ -27,7 +27,7 @@ import frc.robot.commands.CMDLaunchNote;
 import frc.robot.commands.CMDPrepareLaunch;
  import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.SUBShooter;
-import frc.robot.subsystems.SUBVision;
+import frc.robot.subsystems.Vision.SUBVision;
 import frc.robot.subsystems.SUBShooter.*;
 import frc.utils.RoaringUtils;
 import frc.utils.RoaringUtils.DeadzoneUtils;

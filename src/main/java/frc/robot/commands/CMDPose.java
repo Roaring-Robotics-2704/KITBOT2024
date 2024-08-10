@@ -9,7 +9,7 @@ import org.photonvision.PhotonCamera;
  import edu.wpi.first.wpilibj2.command.Command;
  import frc.robot.RobotContainer;
  import frc.robot.subsystems.DriveSubsystem;
- import frc.robot.subsystems.SUBVision;
+ import frc.robot.subsystems.Vision.SUBVision;
 public class CMDPose extends Command {
     Double CAMERA_HEIGHT_METERS = Units.inchesToMeters(17.5);
     double TARGET_HEIGHT_METERS = Units.inchesToMeters(21);

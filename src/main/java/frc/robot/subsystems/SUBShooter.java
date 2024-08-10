@@ -17,7 +17,6 @@ WPI_TalonSRX m_feeder;
 
     public SUBShooter(){
     m_launchWeel = new WPI_TalonSRX(k_LauncherID);
-    m_feeder = new WPI_TalonSRX(k_FeederID);
 
     }
     public Command getIntakeCommand(){
