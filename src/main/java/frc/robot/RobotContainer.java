@@ -29,6 +29,8 @@ import frc.robot.commands.CMDPrepareLaunch;
 import frc.robot.subsystems.SUBShooter;
 import frc.robot.subsystems.Vision.SUBVision;
 import frc.robot.subsystems.SUBShooter.*;
+import frc.robot.subsystems.SUBIntake;
+import frc.robot.commands.CMDIntake;
 import frc.utils.RoaringUtils;
 import frc.utils.RoaringUtils.DeadzoneUtils;
 
@@ -47,6 +49,8 @@ public class RobotContainer {
    public static final SUBShooter m_SUBShooter = new SUBShooter();
    public static final SUBVision m_SUBVision = new SUBVision();
     public static final CMDAlign m_CMDAlign = new CMDAlign();
+    public static final SUBIntake subIntake = new SUBIntake();
+    public static final CMDIntake CMDIntake = new CMDIntake();
 
 SendableChooser<String> PathPlannerautoChooser = new SendableChooser<String>();
     SendableChooser<String> ChoreoautoChooser = new SendableChooser<String>();

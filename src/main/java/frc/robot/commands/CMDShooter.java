@@ -22,12 +22,7 @@ public class CMDShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double feedvalue = 0;
-    if (xbox.getHID().getRightBumper()) {feedvalue=feedvalue+0.2;}
-    if (xbox.getHID().getLeftBumper()) {feedvalue=feedvalue-0.2;}
-
     RobotContainer.m_sUBShooter.setLaunchweel(xbox.getRightTriggerAxis()-xbox.getLeftTriggerAxis());
-    RobotContainer.m_sUBShooter.setFeedWeel(feedvalue);
   }
 
   // Called once the command ends or is interrupted.
